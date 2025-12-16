@@ -1,9 +1,9 @@
 name: Bot Tu Dong (News)
 
 on:
-  # 1. Tự động chạy mỗi tiếng 1 lần (phút thứ 0)
+  # 1. Tự động chạy 3 tiếng 1 lần (phút thứ 8)
   schedule:
-    - cron: '28 */2 * * *'
+    - cron: '8 */3 * * *'
   
   # 2. Cho phép bấm nút chạy thử thủ công (TEST NGAY)
   workflow_dispatch:

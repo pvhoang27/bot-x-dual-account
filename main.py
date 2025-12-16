@@ -1,62 +1,100 @@
 import os
+import time
 import tweepy
 import google.generativeai as genai
 from dotenv import load_dotenv
-import random
 
-# 1. Nạp key (Code này chạy được cả trên máy tính lẫn trên GitHub)
+# 1. Nạp key
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-X_API_KEY = os.getenv("X_API_KEY")
-X_API_SECRET = os.getenv("X_API_SECRET")
-X_ACCESS_TOKEN = os.getenv("X_ACCESS_TOKEN")
-X_ACCESS_TOKEN_SECRET = os.getenv("X_ACCESS_TOKEN_SECRET")
 
 # Cấu hình Gemini
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-flash-latest') # Dùng bản Flash mới nhất
-# model = genai.GenerativeModel('gemini-2.0-flash')
-# model = genai.GenerativeModel('gemini-2.0-flash-lite')
-# model = genai.GenerativeModel('gemma-3-12b')
+model = genai.GenerativeModel('gemini-flash-latest')
+
+# --- CẤU HÌNH TÀI KHOẢN VÀ CHỮ KÝ RIÊNG ---
+ACCOUNTS = [
+    {
+        "name": "Account 1",
+        "api_key": os.getenv("X_API_KEY_1"),
+        "api_secret": os.getenv("X_API_SECRET_1"),
+        "access_token": os.getenv("X_ACCESS_TOKEN_1"),
+        "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET_1"),
+        # Nội dung thêm vào để khác biệt
+        "signature": "\n\n🤖 News by Ares.\n#BreakingNews 6868 #HN #GlobalUpdate" 
+    },
+    {
+        "name": "Account 2",
+        "api_key": os.getenv("X_API_KEY_2"),
+        "api_secret": os.getenv("X_API_SECRET_2"),
+        "access_token": os.getenv("X_ACCESS_TOKEN_2"),
+        "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET_2"),
+        # Nội dung thêm vào để khác biệt
+        "signature": "\n\n👾 =) Update by Chris.\n#DailyNews #MIMIMI #TechWorld tyualdmsa"
+    }
+]
+
 def make_news_tweet():
+    # Mình yêu cầu Gemini viết ngắn hơn xíu (tầm 180 ký tự) để chừa chỗ cho chữ ký thêm vào
     prompt = """
     Act as a professional Global News Bot.
-    Write a short tweet (under 200 characters) in English.
+    Write a short tweet (under 180 characters) in English.
     Topic: Select a random interesting update, event, or fact from ANY field (World News, Business, Technology, Science, Sports, or Entertainment).
     Style: Breaking news style, objective, professional. 
-    Requirement: No hashtags. Pure text. Make it sound like a headline.
+    Requirement: No hashtags in this part. Pure text. Make it sound like a headline.
     """
     try:
         response = model.generate_content(prompt)
         text = response.text.strip()
-        if len(text) > 280:
-            text = text[:275] + "..."
         return text
     except Exception as e:
         print(f"❌ Lỗi Gemini: {e}")
         return None
 
-def post_to_x(content):
+def post_to_x(content, creds):
     try:
         client = tweepy.Client(
-            consumer_key=X_API_KEY,
-            consumer_secret=X_API_SECRET,
-            access_token=X_ACCESS_TOKEN,
-            access_token_secret=X_ACCESS_TOKEN_SECRET
+            consumer_key=creds["api_key"],
+            consumer_secret=creds["api_secret"],
+            access_token=creds["access_token"],
+            access_token_secret=creds["access_token_secret"]
         )
-        response = client.create_tweet(text=content)
-        print(f"✅ Đã đăng thành công! ID: {response.data['id']}")
+        # Tạo nội dung cuối cùng = Nội dung gốc + Chữ ký riêng
+        final_content = content + creds["signature"]
+        
+        response = client.create_tweet(text=final_content)
+        print(f"✅ [{creds['name']}] Đã đăng: {final_content}")
+        print(f"   -> Tweet ID: {response.data['id']}")
         return True
     except Exception as e:
-        print(f"❌ Lỗi đăng X: {e}")
+        print(f"❌ [{creds['name']}] Lỗi đăng X: {e}")
         return False
 
 if __name__ == "__main__":
-    print("🤖 Bot bắt đầu chạy...")
-    tweet = make_news_tweet()
-    if tweet:
-        print(f"📝 Nội dung: {tweet}")
-        post_to_x(tweet)
+    print("🤖 Bot khởi động: 1 Prompt -> Đăng nhiều Acc (Kèm chữ ký riêng)...")
+
+    # 1. Gọi Gemini MỘT LẦN DUY NHẤT (Tiết kiệm quota)
+    print("⏳ Đang request nội dung gốc từ Gemini...")
+    base_content = make_news_tweet()
+
+    if base_content:
+        print(f"📝 Nội dung gốc: {base_content}\n")
+        
+        # 2. Vòng lặp đăng bài
+        for i, acc in enumerate(ACCOUNTS):
+            print(f"--- Bắt đầu xử lý: {acc['name']} ---")
+            
+            # Đăng bài (Hàm này sẽ tự ghép chữ ký Ares/Chris vào)
+            post_to_x(base_content, acc)
+            
+            # 3. Logic ngủ 5 phút (Chỉ ngủ nếu chưa phải acc cuối cùng)
+            if i < len(ACCOUNTS) - 1:
+                print("💤 Đang ngủ 5 phút (300s) để tránh spam...")
+                time.sleep(300) # 300 giây
+                print("⏰ Dậy rồi! Tiếp tục làm việc.\n")
+            else:
+                print("🏁 Hoàn tất danh sách!")
+                
     else:
-        print("⚠️ Không tạo được nội dung.")
+        print("⚠️ Không lấy được nội dung từ Gemini. Hủy chu trình.")
