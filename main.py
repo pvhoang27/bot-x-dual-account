@@ -91,7 +91,7 @@ if __name__ == "__main__":
             
             # 3. Logic ngủ 5 phút (Chỉ ngủ nếu chưa phải acc cuối cùng)
             if i < len(ACCOUNTS) - 1:
-                print("💤 Đang ngủ 5 giay để tránh spam...")
+                print("💤 Đang ngủ 68 giay để tránh spam...")
                 time.sleep(68) # 68 giây
                 print("⏰ Dậy rồi! Tiếp tục làm việc.\n")
             else:
