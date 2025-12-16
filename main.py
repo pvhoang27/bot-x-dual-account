@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+print(f"👉 5 ký tự cuối của Key đang dùng: ...{GEMINI_API_KEY[-5:]}")
 
 # Cấu hình Gemini
 genai.configure(api_key=GEMINI_API_KEY)
@@ -22,7 +23,7 @@ ACCOUNTS = [
         "access_token": os.getenv("X_ACCESS_TOKEN_1"),
         "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET_1"),
         # Nội dung thêm vào để khác biệt
-        "signature": "\n\n🤖 News by Ares.\n#BreakingNews 6868 #HN #GlobalUpdate" 
+        "signature": "\n\n hn .\n#BreakingNews 6868 #HN #GlobalUpdate fdsfd" 
     },
     {
         "name": "Account 2",
@@ -31,7 +32,7 @@ ACCOUNTS = [
         "access_token": os.getenv("X_ACCESS_TOKEN_2"),
         "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET_2"),
         # Nội dung thêm vào để khác biệt
-        "signature": "\n\n👾 =) Update by Chris.\n#DailyNews #MIMIMI #TechWorld tyualdmsa"
+        "signature": "\n\n ====) Mi .\n#DailyNews sdfd #MIMIMI #TechWorld tyualdmsa"
     }
 ]
 
