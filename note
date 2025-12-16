@@ -1,0 +1,9 @@
+python -m venv venv
+
+source venv/Scripts/activate
+
+pip install tweepy google-generativeai python-dotenv
+
+git add .
+git commit -m "update"
+git push
