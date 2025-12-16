@@ -23,7 +23,7 @@ ACCOUNTS = [
         "access_token": os.getenv("X_ACCESS_TOKEN_1"),
         "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET_1"),
         # Nội dung thêm vào để khác biệt
-        "signature": "\n\n hn .\n#BreakingNews 6868 #HN #GlobalUpdate fdsfd" 
+        "signature": "\n\n hn fdsssd .\n#BreakingNews 6868 #HN #GlobalUpdate fdsfd" 
     },
     {
         "name": "Account 2",
@@ -32,7 +32,7 @@ ACCOUNTS = [
         "access_token": os.getenv("X_ACCESS_TOKEN_2"),
         "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET_2"),
         # Nội dung thêm vào để khác biệt
-        "signature": "\n\n ====) Mi .\n#DailyNews sdfd #MIMIMI #TechWorld tyualdmsa"
+        "signature": "\n\n ====) Misfdfdsfds .\n#DailyNews sdfd #MIMIMI #TechWorld tyualdmsa qnfdskfdjdkfdsksfksdf"
     }
 ]
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
             # 3. Logic ngủ 5 phút (Chỉ ngủ nếu chưa phải acc cuối cùng)
             if i < len(ACCOUNTS) - 1:
                 print("💤 Đang ngủ 5 phút (300s) để tránh spam...")
-                time.sleep(300) # 300 giây
+                time.sleep(5) # 300 giây
                 print("⏰ Dậy rồi! Tiếp tục làm việc.\n")
             else:
                 print("🏁 Hoàn tất danh sách!")
