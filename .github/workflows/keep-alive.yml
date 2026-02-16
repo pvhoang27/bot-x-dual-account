@@ -1,0 +1,29 @@
+name: Keep Alive Repository
+
+on:
+  schedule:
+    # Chạy vào lúc 00:00 ngày 1 hàng tháng
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Cho phép bạn bấm nút chạy thử thủ công
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cấp quyền để bot có thể commit và push
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Update keep_alive.txt
+        run: |
+          echo "Last run: $(date)" > keep_alive.txt
+          
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add keep_alive.txt
+          git commit -m "chore: keep repository active to prevent disabling workflows" || exit 0
+          git push
